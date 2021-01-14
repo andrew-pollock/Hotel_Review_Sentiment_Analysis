@@ -1,9 +1,8 @@
 
 ## Creating a dataset with only 20 hotels
-
-library(readxl)
 library(dplyr)
-hotel_reviews <- read_excel("data/raw/hotel_reviews.xls")
+
+hotel_reviews <- readxl::read_excel("data/raw/hotel_reviews.xls")
 
 str(hotel_reviews)
 
@@ -26,7 +25,7 @@ filtered_hotels <- hotel_reviews %>% filter(Location %in% c("Patong", "Kata Beac
 
 
 ## I'll randomly select 10 hotels from each location
-## Setting a seed ensures that this process is replicatable
+## Setting a seed ensures that this process is replicable
 set.seed(101)
 
 # Create a vector of the 20 hotels I've randomly selected
@@ -35,6 +34,13 @@ selected_hotels <- filtered_hotels %>% group_by(Location) %>% select(Location, H
 
 # Select all reviews for those 20 hotels
 selected_reviews <- filtered_hotels %>% filter(Hotel_Name %in% selected_hotels$Hotel_Name)
+
+# Drop Review Date
+selected_reviews <- selected_reviews %>% select(-Review_Date)
+
+# Remove all commas to make .csv easier to read
+selected_reviews <- selected_reviews %>% mutate(Review = gsub(",", " ", Review)) %>% mutate(Review = gsub("!", " ", Review)) %>% 
+  mutate(Review = gsub("\\n", " ", Review)) %>% mutate(Review = gsub("\\.", " ", Review)) %>% mutate(Review = gsub("\\s+", " ", Review))
 
 # Save these reviews down as a .csv
 write.csv(selected_reviews, file = "data/processed/selected_reviews.csv", row.names = FALSE)
