@@ -1,9 +1,10 @@
 
-## Creating a dataset with only 20 hotels
 library(dplyr)
 
+# Load in the raw data
 hotel_reviews <- readxl::read_excel("data/raw/hotel_reviews.xls")
 
+# Check the structure
 str(hotel_reviews)
 
 # Lets start by cleaning the variable names
@@ -18,7 +19,6 @@ hotel_reviews %>% group_by(Hotel_Name) %>% mutate(num_reviews = n()) %>%
 ## Patong and Kata Beach are the two locations with the most hotels with at least 100 reviews
 ## A small number of hotels from Patong have more than 100 reviews
 ## To ensure a fair comparison, I'll select 10 hotels from each location with exactly 100 reviews
-
 filtered_hotels <- hotel_reviews %>% filter(Location %in% c("Patong", "Kata Beach")) %>% 
                       group_by(Hotel_Name) %>% mutate(num_reviews = n()) %>% 
                       filter(num_reviews == 100) %>% select(-num_reviews)
